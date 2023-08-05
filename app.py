@@ -43,6 +43,14 @@ def display_previous_results():
     except FileNotFoundError:
         st.warning("No previous results found.")
 
+# Function to download the CSV file
+def download_csv():
+    if "results" in st.session_state:
+        with open(st.session_state.results, "rb") as f:
+            data = f.read()
+        b64 = base64.b64encode(data).decode()
+        href = f'<a href="data:file/csv;base64,{b64}" download="{os.path.basename(st.session_state.results)}">Download CSV</a>'
+        st.sidebar.markdown(href, unsafe_allow_html=True)
 # Streamlit app
 def main():
     st.title("Animal Species Prediction")
@@ -71,14 +79,7 @@ st.sidebar.button("Download CSV", on_click=download_csv)
 st.sidebar.button("Display Previous Results", on_click=display_previous_results)
 selected_model = st.sidebar.selectbox("Select Model", ["VGG16", "ResNet50"])
 
-# Function to download the CSV file
-def download_csv():
-    if "results" in st.session_state:
-        with open(st.session_state.results, "rb") as f:
-            data = f.read()
-        b64 = base64.b64encode(data).decode()
-        href = f'<a href="data:file/csv;base64,{b64}" download="{os.path.basename(st.session_state.results)}">Download CSV</a>'
-        st.sidebar.markdown(href, unsafe_allow_html=True)
+
 
 if __name__ == "__main__":
     main()
