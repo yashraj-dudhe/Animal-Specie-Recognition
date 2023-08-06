@@ -30,7 +30,7 @@ def save_results_to_csv(results):
     file_name = "results.csv"
     with open(file_name, "a+", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["Date", "Time", "Species Name", "Accuracy"])
+        # writer.writerow(["Date", "Time", "Species Name", "Accuracy"])
         for result in results:
             writer.writerow([result[0], result[1], result[2], result[3]])
     return file_name
@@ -43,14 +43,12 @@ def display_previous_results():
     except FileNotFoundError:
         st.warning("No previous results found.")
 
-# Function to download the CSV file
-def download_csv():
-    if "results" in st.session_state:
-        with open(st.session_state.results, "rb") as f:
-            data = f.read()
-        b64 = base64.b64encode(data).decode()
-        href = f'<a href="data:file/csv;base64,{b64}" download="{os.path.basename(st.session_state.results)}">Download CSV</a>'
-        st.sidebar.markdown(href, unsafe_allow_html=True)
+
+if "results" in st.session_state:
+    with open(st.session_state.results, "rb") as f:
+        data = f.read()
+    st.sidebar.download_button("Download CSV", data, file_name=os.path.basename(st.session_state.results), key="download_button")
+
 # Streamlit app
 def main():
     st.title("Animal Species Prediction")
@@ -73,12 +71,12 @@ def main():
 
             # Store the CSV file path in session state
             st.session_state.results = file_name
-
     # Add buttons in the sidebar
-st.sidebar.button("Download CSV", on_click=download_csv)
+#st.sidebar.button("Download CSV", on_click=download_csv)
 st.sidebar.button("Display Previous Results", on_click=display_previous_results)
 selected_model = st.sidebar.selectbox("Select Model", ["VGG16", "ResNet50"])
 
+# Function to download the CSV file
 
 
 if __name__ == "__main__":
